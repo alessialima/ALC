@@ -82,11 +82,11 @@ def det(A): # determinante
             for k in range(m):
                 if k != i:
                     fila.append(A[j][k])
-                sub.append(fila)
-            menor = det(sub)
-            signo = (-1)**i
-            res += signo*A[0][i]*menor
-    return res  
+            sub.append(fila)
+        menor = det(sub)
+        signo = (-1)**i
+        res += signo*A[0][i]*menor
+    return res   
 
 
 def inversa(A):
@@ -196,6 +196,28 @@ def esSDP(A, atol=1e-8):
             return False 
 
     return True 
-    
+## se podra usar solo criterio sylvester + es simetrica ? o tiene mas costo ?    
 
-#%% cholesky (me falta hacer esta) 
+#%% cholesky 
+
+def calculaCholesky(A,atol=1e-10):
+    A = np.array(A, dtype=np.float64)
+    m, n = A.shape 
+
+    if m != n:
+        return None # devuelve solo la L 
+
+    if not esSDP(A):
+        return None 
+
+    L, U, nops = calculaLU(A)
+    D = np.array(U, dtype = np.float64) 
+    for i in range(m):
+        for j in range(m):
+            if i == j:
+                D[i,i] = np.sqrt(D[i,i]) 
+            else:
+                D[i,j] = 0 
+    
+    return L @ D # deberia agregar la multiplicacion bien hecha 
+
